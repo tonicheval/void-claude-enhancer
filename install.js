@@ -104,12 +104,16 @@ try {
         const { appName, extDir, extVersion } = target;
         console.log(`\n  ${CYAN}Patching ${appName} (${extVersion})...${RESET}`);
         
+        // Dynamically extract version number (e.g. 2.1.145) from extension folder name
+        const verMatch = /anthropic\.claude-code-(\d+\.\d+\.\d+)/.exec(extVersion);
+        const ver = verMatch ? verMatch[1] : 'latest';
+        
         const ejs = path.join(extDir, 'extension.js');
         const wjs = path.join(extDir, 'webview', 'index.js');
         const pkg = path.join(extDir, 'package.json');
         
         // Backups suffix
-        const cleanSuffix = ".bak-may21-v2.1.145-clean";
+        const cleanSuffix = `.bak-v${ver}-clean`;
         const ejsClean = `${ejs}${cleanSuffix}`;
         const wjsClean = `${wjs}${cleanSuffix}`;
         const pkgClean = `${pkg}${cleanSuffix}`;
@@ -231,7 +235,7 @@ try {
         applyWjs('S0.default.createElement("span",{className:w2.sessionName},Le1(Kk(Z),Q))', 'S0.default.createElement("span",{className:w2.sessionName},(()=>{let _t=Kk(Z),_m=/^(\\[[^\\]]+\\])(.*)/.exec(_t);if(_m&&Z.isShared&&Z.isShared.value)return S0.default.createElement(S0.default.Fragment,null,S0.default.createElement("em",null,Le1(_m[1],Q)),Le1(_m[2],Q));return Le1(_t,Q)})())', 'P12_wjs_c (isShared italic rendering)');
         
         // Save backup copies of fully patched files
-        const safeBackupDir = path.join(homedir, '.claude', 'claude-patches', 'v2.1.145');
+        const safeBackupDir = path.join(homedir, '.claude', 'claude-patches', `v${ver}`);
         if (!fs.existsSync(safeBackupDir)) {
             fs.mkdirSync(safeBackupDir, { recursive: true });
         }
